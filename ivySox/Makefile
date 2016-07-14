@@ -9,7 +9,7 @@ DEBUG	= 	-O2
 CC	= 	g++
 AR	= 	ar
 INCLUDE	= 	-I'../tinyxml'
-FLAGS	= 	$(DEBUG) $(INCLUDE) -g -pthread -std=c++0x
+FLAGS	= 	$(DEBUG) $(INCLUDE) -g -pthread -std=gnu++0x
 SOURCE_LIB 	= IvySox.cpp OliWeb.cpp ../tinyxml/tinyxml2.cpp
 SOURCE	=	$(SOURCE_LIB) main.cpp
 OBJ_LIB 	= $(SOURCE_LIB:.cpp=.o)
