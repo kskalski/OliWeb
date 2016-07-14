@@ -45,6 +45,8 @@ SOFTWARE.
 using namespace std;
 using namespace tinyxml2;
 
+class IRequestHandler;
+
 class InboundRequest
 {
     public:
@@ -92,7 +94,8 @@ class OliWeb
     public:
 
     OliWeb();
-    OliWeb(const string &config);
+    OliWeb(const string &config) : OliWeb(config, nullptr) {}
+    OliWeb(const string &config, IRequestHandler* req_handler);
     ~OliWeb();
     int run();
     void threadRequestHandler(InboundRequest *request);
@@ -140,6 +143,7 @@ class OliWeb
 
     IvySox ivySox;
     XMLDocument config;
+    IRequestHandler* request_handler_;
     ofstream log;
 
     pthread_mutex_t ivySoxMutex;

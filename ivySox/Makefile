@@ -7,10 +7,13 @@
 
 DEBUG	= 	-O2
 CC	= 	g++
+AR	= 	ar
 INCLUDE	= 	-I'../tinyxml'
 FLAGS	= 	$(DEBUG) $(INCLUDE) -g -pthread -std=c++0x
-SOURCE	= 	IvySox.cpp OliWeb.cpp main.cpp ../tinyxml/tinyxml2.cpp
-OBJ 	=	$(SOURCE:.cpp=.o)
+SOURCE_LIB 	= IvySox.cpp OliWeb.cpp ../tinyxml/tinyxml2.cpp
+SOURCE	=	$(SOURCE_LIB) main.cpp
+OBJ_LIB 	= $(SOURCE_LIB:.cpp=.o)
+OBJ 	=	$(SOURCE:.cpp=.o) OliLib.a
 LIBS	=	-lpthread
 
 all:		OliWeb GetProperty install
@@ -19,10 +22,14 @@ OliWeb:		$(OBJ)
 		@echo [Link]
 		@$(CC) -o $@ $(OBJ) $(LIBS)
 
+OliLib.a:	$(OBJ_LIB)
+		@echo [Link]
+		@$(AR) rvs $@ $?
+
 GetProperty:
 		@cd ../GetQueryArgs;make all
 
-.cpp.o:		
+.cpp.o:
 		@echo [Compile] $<
 		@$(CC) -c $(FLAGS) $< -o $@
 

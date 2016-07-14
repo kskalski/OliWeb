@@ -32,6 +32,8 @@ SOFTWARE.
 #include <sys/wait.h>
 #include <fcntl.h>
 
+#include "IRequestHandler.h"
+
 using namespace std;
 using namespace tinyxml2;
 
@@ -52,7 +54,8 @@ OliWeb::OliWeb()
     openLogFile();
 }
 
-OliWeb::OliWeb(const string &config)
+OliWeb::OliWeb(const string &config, IRequestHandler* req_handler)
+  : request_handler_(req_handler)
 {
     InitDefaults();
     configFileName=config;
@@ -398,6 +401,15 @@ void OliWeb::threadRequestHandler(InboundRequest *request)
     {
         invokePython(request);
     }
+    else if (request_handler_->ShouldHandle(request->requestedFile))
+    {
+        if (request_handler_->Handle(request))
+        {
+            sendStatusOk(request);
+        } else {
+            sendStatusNotFound(request);
+        }
+    }
     else {
         request->requestedFile = rootFileDirectory + request->requestedFile;
         fetchFile(request);
@@ -453,7 +465,7 @@ string OliWeb::extractQueryArgs(string url)
     // DEBUG!!
     //std::cout << "a = " << toString(a) << std::endl;
     //std::cout << "url  = '" << url << "'" << std::endl;
-    //std::cout << "args = '" << args << "'" << std::endl; 
+    //std::cout << "args = '" << args << "'" << std::endl;
 
     return args;
 }
