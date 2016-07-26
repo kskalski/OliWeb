@@ -46,6 +46,7 @@ using namespace std;
 using namespace tinyxml2;
 
 class IRequestHandler;
+class OliWeb;
 
 class InboundRequest
 {
@@ -66,7 +67,7 @@ class InboundRequest
     string protocol;
     string body;
 
-    void *oliWebPtr;
+    OliWeb *oliWebPtr;
     int bytesSent;
     int receivedBytes;
     InboundConnection inbound;

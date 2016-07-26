@@ -345,7 +345,7 @@ void OliWeb::handleInboundRequest()
 {
     // Accept inbound & Log request
     InboundRequest *request = new InboundRequest();
-    request->oliWebPtr = (void *)this;
+    request->oliWebPtr = this;
 
     request->socketNumber = ivySox.acceptInbound(&request->inbound);
 
@@ -366,8 +366,7 @@ void OliWeb::handleInboundRequest()
 void *threadEntryPoint(void *requestVoid)
 {
     InboundRequest *request = (InboundRequest *) requestVoid;
-    OliWeb *oliWeb = (OliWeb *)request->oliWebPtr;
-    oliWeb->threadRequestHandler(request);
+    request->oliWebPtr->threadRequestHandler(request);
     delete request;
     pthread_exit(NULL);
 }
@@ -403,12 +402,11 @@ void OliWeb::threadRequestHandler(InboundRequest *request)
     }
     else if (request_handler_->ShouldHandle(request->requestedFile))
     {
-        if (request_handler_->Handle(request))
-        {
-            sendStatusOk(request);
-        } else {
-            sendStatusNotFound(request);
-        }
+        const string& result = request_handler_->Handle(request);
+        pthread_mutex_lock(&ivySoxMutex);
+        request->inbound.sendMessage(result);
+        request->inbound.closeConnection();
+        pthread_mutex_unlock(&ivySoxMutex);
     }
     else {
         request->requestedFile = rootFileDirectory + request->requestedFile;
