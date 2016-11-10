@@ -418,7 +418,7 @@ int OliWeb::sendStatusOk(InboundRequest *request)
 {
     int bytesSent = -1;
     bytesSent = request->inbound.sendMessage("HTTP/1.1 200 OK\r\n");
-    //bytesSent += request->inbound.sendMessage("Content-Type: text/html; charset=UTF-8\r\n");
+    bytesSent += request->inbound.sendMessage("Content-Type: text/html; charset=UTF-8\r\n");
     bytesSent += request->inbound.sendMessage("Connection: close\r\n");
     bytesSent += request->inbound.sendMessage("\r\n");
     return bytesSent;
